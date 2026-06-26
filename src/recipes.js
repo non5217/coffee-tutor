@@ -7,7 +7,7 @@ export const recipes = {
       hot: {
         ingredients: ['กาแฟบด 7-10 กรัม (1 ช็อต)', 'สกัดน้ำกาแฟ 1 oz (30 ml)'],
         layers: [{ name: 'Espresso', height: 100, color: '#451a03' }],
-        steps: [{ name: 'สกัดเอสเพรสโซ่', duration: 25, phase: 'extraction' }]
+        steps: [{ name: 'สกัดเอสเพรสโซ่', duration: 25, phase: 'extraction', target: 'main', layerIndex: 0 }]
       },
       cold: {
         ingredients: ['กาแฟบด 14-20 กรัม (2 ช็อต)', 'สกัดน้ำกาแฟ 4 oz (120 ml)', 'นมผสม 1.5 oz (45 ml)', 'น้ำแข็ง'],
@@ -16,16 +16,17 @@ export const recipes = {
           { name: 'เอสเพรสโซ่', height: 65, color: '#451a03' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ผสมกาแฟกับนมผสมแล้วเทลงแก้วน้ำแข็ง', duration: 10, phase: 'mix' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'เทนมผสมลงในแก้วน้ำแข็ง', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ราดช็อตเอสเพรสโซ่ลงแก้ว', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 }
         ]
       },
       blended: {
         ingredients: ['กาแฟบด 14-20 กรัม (2 ช็อต)', 'สกัดน้ำกาแฟ 4 oz (120 ml)', 'นมผสม 2.5 oz (75 ml)', 'ผงปั่น 1 ช้อนโต๊ะ', 'น้ำแข็ง 1 แก้วพูน'],
         layers: [{ name: 'เอสเพรสโซ่ปั่น', height: 100, color: '#78350f' }],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ปั่นส่วนผสมทั้งหมดให้ละเอียด', duration: 15, phase: 'blend' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'ปั่นส่วนผสมทั้งหมดให้ละเอียด', duration: 15, phase: 'blend', target: 'main', layerIndex: 0 }
         ]
       }
     }
@@ -42,8 +43,8 @@ export const recipes = {
           { name: 'เอสเพรสโซ่', height: 20, color: '#451a03' }
         ],
         steps: [
-          { name: 'ใส่น้ำร้อนลงในแก้ว', duration: 5, phase: 'prep' },
-          { name: 'สกัดเอสเพรสโซ่ท็อปด้านบน', duration: 25, phase: 'extraction' }
+          { name: 'ใส่น้ำร้อนลงในแก้ว', duration: 5, phase: 'prep', target: 'main', layerIndex: 0 },
+          { name: 'สกัดเอสเพรสโซ่ท็อปด้านบน', duration: 25, phase: 'extraction', target: 'main', layerIndex: 1 }
         ]
       },
       cold: {
@@ -53,8 +54,9 @@ export const recipes = {
           { name: 'เอสเพรสโซ่', height: 40, color: '#451a03' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ผสมน้ำและน้ำเชื่อมเทลงแก้วน้ำแข็ง ท็อปด้วยกาแฟ', duration: 10, phase: 'mix' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'เทน้ำเปล่าเย็นและน้ำเชื่อมลงแก้วน้ำแข็ง', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ราดช็อตเอสเพรสโซ่ท็อปด้านบน', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 }
         ]
       }
     }
@@ -72,8 +74,9 @@ export const recipes = {
           { name: 'ฟองนม', height: 35, color: '#ffffff' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 1 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'เทนมร้อนครึ่งแก้ว และตักฟองนมท็อปด้านบน', duration: 10, phase: 'garnish' }
+          { name: 'สกัดเอสเพรสโซ่ 1 ช็อต', duration: 25, phase: 'extraction', target: 'main', layerIndex: 0 },
+          { name: 'เทนมร้อนครึ่งแก้ว', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 },
+          { name: 'ตักฟองนมท็อปด้านบน', duration: 5, phase: 'garnish', target: 'main', layerIndex: 2 }
         ]
       },
       cold: {
@@ -84,16 +87,18 @@ export const recipes = {
           { name: 'ฟองนมเย็น', height: 30, color: '#ffffff' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ผสมกาแฟกับนมผสม เทลงแก้ว ท็อปด้วยฟองนม', duration: 10, phase: 'garnish' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'เทนมผสมลงแก้วน้ำแข็ง', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ราดช็อตเอสเพรสโซ่ลงแก้ว', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 },
+          { name: 'ท็อปด้วยฟองนมเย็น', duration: 5, phase: 'garnish', target: 'main', layerIndex: 2 }
         ]
       },
       blended: {
         ingredients: ['กาแฟบด 14-20 กรัม (2 ช็อต)', 'สกัดน้ำกาแฟ 3 oz (90 ml)', 'นมผสม 2.5 oz (75 ml)', 'นมสด 1 oz (30 ml)', 'ผงปั่น 1 ช้อนโต๊ะ', 'น้ำแข็ง 1 แก้วพูน'],
         layers: [{ name: 'คาปูชิโน่ปั่น', height: 100, color: '#78350f' }],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ปั่นกาแฟกับนมและผงปั่นให้ละเอียด', duration: 15, phase: 'blend' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'ปั่นกาแฟกับนมและผงปั่นให้ละเอียด', duration: 15, phase: 'blend', target: 'main', layerIndex: 0 }
         ]
       }
     }
@@ -111,8 +116,9 @@ export const recipes = {
           { name: 'ฟองนมบางเบา', height: 10, color: '#ffffff' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 1 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'เทนมสตีมเกือบเต็มแก้ว และทำลวดลายลาเต้อาร์ท', duration: 10, phase: 'garnish' }
+          { name: 'สกัดเอสเพรสโซ่ 1 ช็อต', duration: 25, phase: 'extraction', target: 'main', layerIndex: 0 },
+          { name: 'เทนมสตีมเกือบเต็มแก้ว', duration: 10, phase: 'garnish', target: 'main', layerIndex: 1 },
+          { name: 'ตักฟองนมท็อปด้านบน', duration: 3, phase: 'garnish', target: 'main', layerIndex: 2 }
         ]
       },
       cold: {
@@ -122,16 +128,17 @@ export const recipes = {
           { name: 'เอสเพรสโซ่', height: 30, color: '#451a03' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ผสมนมสดกับนมผสม เทลงแก้ว ท็อปด้วยกาแฟช็อต', duration: 10, phase: 'mix' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'ผสมนมสดกับนมผสม เทลงแก้ว', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ราดช็อตเอสเพรสโซ่ท็อปด้านบน', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 }
         ]
       },
       blended: {
         ingredients: ['กาแฟบด 14-20 กรัม (2 ช็อต)', 'สกัดน้ำกาแฟ 2 oz (60 ml)', 'นมผสม 2.5 oz (75 ml)', 'นมสด 2.5-3 oz', 'ผงปั่น 1 ช้อนโต๊ะ', 'น้ำแข็ง 1 แก้วพูน'],
         layers: [{ name: 'ลาเต้ปั่นหวานมัน', height: 100, color: '#854d0e' }],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ปั่นส่วนผสมทั้งหมดให้เนียนละเอียด', duration: 15, phase: 'blend' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'ปั่นส่วนผสมทั้งหมดให้เนียนละเอียด', duration: 15, phase: 'blend', target: 'main', layerIndex: 0 }
         ]
       }
     }
@@ -149,8 +156,9 @@ export const recipes = {
           { name: 'นมสดร้อน', height: 50, color: '#fef3c7' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 1 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ผสมโกโก้กับนมร้อนและกาแฟเข้าด้วยกัน', duration: 10, phase: 'mix' }
+          { name: 'สกัดเอสเพรสโซ่ 1 ช็อต', duration: 25, phase: 'extraction', target: 'main', layerIndex: 1 },
+          { name: 'ผสมโกโก้กับนมร้อน', duration: 10, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'เทนมสดร้อนท็อปหน้า', duration: 5, phase: 'garnish', target: 'main', layerIndex: 2 }
         ]
       },
       cold: {
@@ -161,16 +169,17 @@ export const recipes = {
           { name: 'เอสเพรสโซ่', height: 40, color: '#451a03' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ผสมนมผสมและโกโก้ เทใส่แก้ว ตามด้วยน้ำกาแฟ', duration: 10, phase: 'mix' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'เทโกโก้ผสมและนมผสมลงแก้วน้ำแข็ง', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ราดช็อตเอสเพรสโซ่ท็อปด้านบน', duration: 5, phase: 'mix', target: 'main', layerIndex: 2 }
         ]
       },
       blended: {
         ingredients: ['กาแฟบด 14-20 กรัม (2 ช็อต)', 'สกัดน้ำกาแฟ 3 oz (90 ml)', 'โกโก้ผสม 1.5 oz (45 ml)', 'นมผสม 1.5 oz (45 ml)', 'ผงปั่น 1 ช้อนโต๊ะ', 'น้ำแข็ง 1 แก้วพูน'],
         layers: [{ name: 'มอคค่าปั่น', height: 100, color: '#5c3a21' }],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ปั่นโกโก้ นมผสม กาแฟ และผงปั่นเข้าด้วยกัน', duration: 15, phase: 'blend' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'ปั่นโกโก้ นมผสม กาแฟ และผงปั่นเข้าด้วยกัน', duration: 15, phase: 'blend', target: 'main', layerIndex: 0 }
         ]
       }
     }
@@ -189,8 +198,9 @@ export const recipes = {
           { name: 'ฟองนม + ซอสคาราเมล', height: 10, color: '#d97706' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'เติมนมผสมคาราเมลลงในแก้ว ตามด้วยน้ำกาแฟ และตกแต่งซอสคาราเมล', duration: 12, phase: 'garnish' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'เทไซรัปคาราเมลและนมสดลงแก้ว', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ราดช็อตเอสเพรสโซ่และฟองนมท็อปด้านบน', duration: 5, phase: 'garnish', target: 'main', layerIndex: 2 }
         ]
       }
     }
@@ -207,9 +217,9 @@ export const recipes = {
           { name: 'โฟมดัลโกนาเข้มข้น', height: 40, color: '#b45309' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ตีช็อตกาแฟกับน้ำตาลทรายให้เป็นครีมโฟมหนืด', duration: 15, phase: 'blend' },
-          { name: 'เทนมสดใส่น้ำแข็ง แล้วท็อปหน้าด้วยโฟมกาแฟดัลโกนา', duration: 8, phase: 'mix' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'เทนมสดลงในแก้วน้ำแข็ง', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ตีช็อตกาแฟกับน้ำตาลและราดโฟมท็อปด้านบน', duration: 10, phase: 'mix', target: 'main', layerIndex: 1 }
         ]
       }
     }
@@ -226,8 +236,9 @@ export const recipes = {
           { name: 'เอสเพรสโซ่ช็อต', height: 35, color: '#451a03' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'เทน้ำส้มคั้นลงในแก้วน้ำแข็ง แล้วค่อย ๆ เทน้ำกาแฟท็อปด้านบน', duration: 10, phase: 'mix' }
+          { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'เทน้ำส้มคั้นลงในแก้วน้ำแข็ง', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ราดช็อตเอสเพรสโซ่ท็อปด้านบน', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 }
         ]
       }
     }
@@ -245,9 +256,9 @@ export const recipes = {
           { name: 'เอสเพรสโซ่', height: 20, color: '#451a03' }
         ],
         steps: [
-          { name: 'สกัดเอสเพรสโซ่ 1 ช็อต', duration: 25, phase: 'extraction' },
-          { name: 'ผสมไซรัป น้ำเชื่อม น้ำมะนาว และโซดาให้เข้ากันใน Shaker กับน้ำแข็ง', duration: 12, phase: 'mix' },
-          { name: 'เทใส่แก้ว ท็อปด้วยกาแฟและใบมิ้นต์', duration: 8, phase: 'garnish' }
+          { name: 'สกัดเอสเพรสโซ่ 1 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'ผสมไซรัป มิ้นต์ โซดาลงในแก้ว', duration: 7, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'เทช็อตกาแฟลงแก้วและตกแต่งใบมิ้นต์', duration: 5, phase: 'garnish', target: 'main', layerIndex: 2 }
         ]
       }
     }
@@ -264,8 +275,9 @@ export const recipes = {
           { name: 'นมสดราดหน้า', height: 25, color: '#ffffff' }
         ],
         steps: [
-          { name: 'แช่ผงชาในน้ำร้อน 2 นาทีแล้วกรองกากชาออก', duration: 30, phase: 'extraction' },
-          { name: 'ผสมน้ำชาไทยกับนมผสม เทใส่แก้วแล้วท็อปหน้าด้วยนมสด', duration: 10, phase: 'mix' }
+          { name: 'แช่ผงชาในน้ำร้อน 2 นาทีและผสมนมผสม', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'เทชาไทยลงแก้วน้ำแข็ง', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ราดนมสดท็อปด้านบนแก้ว', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 }
         ]
       }
     }
@@ -282,8 +294,9 @@ export const recipes = {
           { name: 'มัทฉะเข้มข้น', height: 40, color: '#15803d' }
         ],
         steps: [
-          { name: 'ละลายผงมัทฉะกับน้ำร้อนให้เข้ากันไม่จับตัวเป็นก้อน', duration: 15, phase: 'extraction' },
-          { name: 'ผสมนมสดกับนมผสม เทใส่แก้วแล้วราดมัทฉะท็อปหน้า', duration: 10, phase: 'mix' }
+          { name: 'ละลายผงมัทฉะกับน้ำร้อน', duration: 15, phase: 'extraction', target: 'shot_cup' },
+          { name: 'เทนมสดผสมนมผสมลงในแก้ว', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ราดมัทฉะเข้มข้นท็อปหน้า', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 }
         ]
       }
     }
@@ -295,10 +308,10 @@ export const recipes = {
     specs: {
       cold: {
         ingredients: ['ผงชาไทย 1 ช้อนตวง', 'น้ำร้อน 5 oz (กรองเอาน้ำชา 4 oz)', 'น้ำมะนาวสด 0.5 oz (15 ml)', 'ไซรัปน้ำเชื่อม 1 oz (30 ml)', 'น้ำเปล่า 0.5 oz (15 ml)', 'น้ำแข็ง'],
-        layers: [{ name: 'ชามะนาวหวานเปรี้ยว', height: 100, color: '#d97706' }],
+        layers: [{ name: 'ชามะนาว', height: 100, color: '#d97706' }],
         steps: [
-          { name: 'ชงชาแช่น้ำร้อนแล้วกรองกากชาออก', duration: 30, phase: 'extraction' },
-          { name: 'ผสมน้ำชากับน้ำเชื่อมและน้ำมะนาวคนให้เข้ากัน เสิร์ฟใส่น้ำแข็ง', duration: 10, phase: 'mix' }
+          { name: 'ชงชาแช่น้ำร้อนแล้วกรองกากชาออก', duration: 25, phase: 'extraction', target: 'shot_cup' },
+          { name: 'ผสมน้ำชากับน้ำเชื่อมและน้ำมะนาว เทลงแก้ว', duration: 10, phase: 'mix', target: 'main', layerIndex: 0 }
         ]
       }
     }
@@ -316,8 +329,10 @@ export const recipes = {
           { name: 'ชาเขียวมัทฉะ', height: 30, color: '#15803d' }
         ],
         steps: [
-          { name: 'ผสมผงมัทฉะกับน้ำร้อน 2 oz และนมผสมให้เข้ากัน', duration: 15, phase: 'prep' },
-          { name: 'เทชาเขียวมัทฉะลงแก้วน้ำแข็ง เติมนมสด แล้วท็อปด้วยชาไทยแยกชั้น', duration: 12, phase: 'mix' }
+          { name: 'ผสมผงมัทฉะกับน้ำร้อน 2 oz และนมผสม', duration: 15, phase: 'prep', target: 'shot_cup' },
+          { name: 'เทชาเขียวมัทฉะลงแก้วน้ำแข็ง', duration: 5, phase: 'mix', target: 'main', layerIndex: 2 },
+          { name: 'เติมนมสดจืดตรงกลาง', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 },
+          { name: 'เทชาไทยส้มแยกชั้นด้านล่างสุด', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 }
         ]
       }
     }
@@ -334,8 +349,9 @@ export const recipes = {
           { name: 'โกโก้เข้มช็อคโกแลต', height: 70, color: '#3b2314' }
         ],
         steps: [
-          { name: 'ละลายผงโกโก้ในน้ำร้อนจัดคนให้เข้ากัน', duration: 15, phase: 'extraction' },
-          { name: 'ผสมนม เทลงแก้ว ราดโกโก้เข้มข้นลงด้านบน', duration: 8, phase: 'mix' }
+          { name: 'ละลายผงโกโก้ในน้ำร้อนจัด', duration: 15, phase: 'extraction', target: 'shot_cup' },
+          { name: 'เทนมผสมลงแก้วน้ำแข็ง', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ราดโกโก้เข้มข้นลงด้านบน', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 }
         ]
       }
     }
@@ -353,8 +369,9 @@ export const recipes = {
           { name: 'โกโก้เข้มข้น', height: 50, color: '#3b2314' }
         ],
         steps: [
-          { name: 'ละลายผงโกโก้ในน้ำร้อนและนมผสม', duration: 15, phase: 'prep' },
-          { name: 'เทไซรัปมิ้นต์ก้นแก้ว ใส่น้ำแข็ง เติมนม แล้วท็อปด้วยโกโก้แยกชั้นสวยงาม', duration: 12, phase: 'mix' }
+          { name: 'ละลายผงโกโก้ในน้ำร้อนและนมผสม', duration: 15, phase: 'prep', target: 'shot_cup' },
+          { name: 'เทไซรัปมิ้นต์ลงแก้ว เติมน้ำแข็งและนม', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'เทโกโก้แยกชั้นสวยงามท็อปหน้า', duration: 5, phase: 'mix', target: 'main', layerIndex: 2 }
         ]
       }
     }
@@ -372,8 +389,9 @@ export const recipes = {
           { name: 'ซอสคาราเมล + ฟองนม', height: 20, color: '#f59e0b' }
         ],
         steps: [
-          { name: 'ผสมไซรัปคาราเมล นมผสม และนมสดให้เข้ากันในแก้ว', duration: 10, phase: 'mix' },
-          { name: 'บีบซอสคาราเมลตกแต่งรอบแก้วและท็อปหน้าพร้อมเสิร์ฟ', duration: 8, phase: 'garnish' }
+          { name: 'เทไซรัปคาราเมลลงก้นแก้ว', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ใส่นมผสมและนมสดคนให้เข้ากัน', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 },
+          { name: 'บีบซอสคาราเมลตกแต่งท็อปด้านบน', duration: 5, phase: 'garnish', target: 'main', layerIndex: 2 }
         ]
       }
     }

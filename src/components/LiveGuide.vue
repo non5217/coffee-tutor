@@ -47,15 +47,18 @@ const formatTime = computed(() => {
 const stepsTimeline = computed(() => {
   if (!currentSpec.value) return []
   let elapsed = 0
-  return currentSpec.value.steps.map(step => {
+  return currentSpec.value.steps.map((step, idx) => {
     const startSec = elapsed
     const endSec = elapsed + step.duration
     elapsed += step.duration
     return {
       name: step.name,
       phase: step.phase,
+      target: step.target,
+      layerIndex: step.layerIndex,
       start: startSec,
-      end: endSec
+      end: endSec,
+      index: idx
     }
   })
 })
@@ -75,7 +78,7 @@ const currentStepName = computed(() => {
 
 const activeStep = computed(() => {
   if (seconds.value === 0) return null
-  if (seconds.value >= totalDuration.value) return { name: 'done', phase: 'done' }
+  if (seconds.value >= totalDuration.value) return { name: 'done', phase: 'done', target: 'none' }
   return stepsTimeline.value[currentStepIndex.value]
 })
 
@@ -112,25 +115,51 @@ const streamColor = computed(() => {
   return '#451a03' // Coffee brown
 })
 
+// Calculate the fill percentage for each layer in the main glass cup reactively based on step progress
 const fillPercentages = computed(() => {
   if (!currentSpec.value) return []
   const layers = currentSpec.value.layers
-  if (seconds.value === 0) {
-    return layers.map(() => 0)
+  const timeline = stepsTimeline.value
+  
+  if (seconds.value === 0) return layers.map(() => 0)
+
+  return layers.map((layer, index) => {
+    // Find the step in the timeline that fills this specific main cup layer index
+    const stepIdx = timeline.findIndex(s => s.target === 'main' && s.layerIndex === index)
+    if (stepIdx === -1) {
+      // Fallback: If no step explicitly fills this layer, fill it bottom-up by default
+      return seconds.value >= totalDuration.value ? layer.height : 0
+    }
+
+    if (currentStepIndex.value > stepIdx || seconds.value >= totalDuration.value) {
+      return layer.height // Step completed -> Full layer
+    }
+    if (currentStepIndex.value === stepIdx) {
+      // Step is actively running -> Grow layer proportionally
+      const activeStepObj = timeline[stepIdx]
+      const progress = (seconds.value - activeStepObj.start) / (activeStepObj.end - activeStepObj.start)
+      return layer.height * progress
+    }
+    return 0 // Step not reached yet -> Empty layer
+  })
+})
+
+// Animate the small shot cup filling and draining
+const shotCupFill = computed(() => {
+  if (!activeStep.value || !isRunning.value) return 0
+  const step = activeStep.value
+  const progress = (seconds.value - step.start) / (step.end - step.start)
+  
+  if (step.target === 'shot_cup') {
+    return progress * 100 // Fills up during extraction step
   }
   
-  if (seconds.value >= totalDuration.value) {
-    return layers.map(l => l.height)
+  // If active source is shot_cup (meaning it is pouring from top-right), drain it
+  if (activeSource.value === 'shot_cup') {
+    return (1 - progress) * 100 // Drains as it pours
   }
-
-  // Calculate scaling coefficient based on time
-  const currentRatio = seconds.value / totalDuration.value
-  let remainingFill = currentRatio * 100
-  return layers.map(layer => {
-    const fill = Math.min(layer.height, remainingFill)
-    remainingFill = Math.max(0, remainingFill - layer.height)
-    return fill
-  })
+  
+  return 0
 })
 </script>
 
@@ -252,16 +281,26 @@ const fillPercentages = computed(() => {
           </div>
         </transition>
 
-        <!-- 3. Pouring Shot Cup -->
+        <!-- 3. Pouring Shot Cup (Tilted at top-right) -->
         <transition name="slide-in-shot">
           <div v-if="activeSource === 'shot_cup'" class="absolute top-2 right-16 flex flex-col items-end z-20 origin-bottom-left rotate-[-35deg] transition-all duration-500">
             <div class="relative w-12 h-12 bg-sky-200/40 border border-sky-100/50 rounded-b-md shadow-md flex items-center justify-center">
-              <!-- Espresso inside shot cup -->
-              <div class="absolute bottom-0 w-full h-2/3 bg-amber-900/80 rounded-b-sm"></div>
+              <!-- Espresso inside pouring shot cup draining -->
+              <div class="absolute bottom-0 w-full bg-amber-900/80 rounded-b-sm transition-all duration-300" :style="{ height: shotCupFill + '%' }"></div>
               <!-- Pour lip -->
               <div class="absolute -right-1 top-0 w-2 h-2 bg-sky-200/40 transform rotate-45 border-t border-r border-sky-100/50"></div>
-              <span class="text-[7px] text-white font-extrabold z-10">Espresso</span>
             </div>
+          </div>
+        </transition>
+
+        <!-- 4. Receiving Shot Cup (Centered under portafilter during extraction steps) -->
+        <transition name="fade">
+          <div v-if="activeStep?.target === 'shot_cup'" class="absolute top-20 w-16 h-16 border-2 border-slate-500/80 bg-slate-950/20 rounded-b-lg relative overflow-hidden flex flex-col justify-end shadow-md z-15">
+            <!-- Shot cup filling up -->
+            <div 
+              class="w-full bg-amber-900/80 transition-all duration-1000 ease-out"
+              :style="{ height: shotCupFill + '%' }"
+            ></div>
           </div>
         </transition>
 
@@ -271,7 +310,7 @@ const fillPercentages = computed(() => {
         <div 
           v-if="activeSource === 'portafilter'" 
           class="absolute top-10 left-1/2 -translate-x-1/2 w-1.5 h-36 z-10 pointer-events-none transition-all duration-300"
-          :style="{ backgroundColor: streamColor }"
+          :style="{ backgroundColor: streamColor, height: activeStep?.target === 'shot_cup' ? '40px' : '144px' }"
         ></div>
 
         <!-- Angled Stream (Pitcher or Shot Cup pouring from top-right) -->
