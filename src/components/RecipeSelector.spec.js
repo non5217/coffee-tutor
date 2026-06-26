@@ -5,8 +5,8 @@ import RecipeSelector from './RecipeSelector.vue'
 describe('RecipeSelector', () => {
   it('renders categories and recipes', () => {
     const wrapper = mount(RecipeSelector)
-    expect(wrapper.text()).toContain('coffee')
-    expect(wrapper.text()).toContain('tea')
-    expect(wrapper.text()).toContain('non coffee')
+    expect(wrapper.text()).toContain('กาแฟ')
+    expect(wrapper.text()).toContain('ชา')
+    expect(wrapper.text()).toContain('เครื่องดื่มอื่นๆ')
   })
 })

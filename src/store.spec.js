@@ -5,7 +5,7 @@ describe('Store', () => {
   it('initializes with default state', () => {
     expect(state.category).toBe('coffee')
     expect(state.drinkId).toBe('espresso')
-    expect(state.servingType).toBe('cold')
+    expect(state.servingType).toBe('hot')
     expect(state.sweetness).toBe('normal')
     expect(state.currentStep).toBe('selection')
   })

@@ -4,7 +4,7 @@ export const state = reactive({
   currentStep: 'selection',
   category: 'coffee',
   drinkId: 'espresso',
-  servingType: 'cold',
+  servingType: 'hot',
   sweetness: 'normal'
 })
 

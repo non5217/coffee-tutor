@@ -1,3 +1,213 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* ── Design Tokens (OKLCH) — Warm Coffee Lab Theme ── */
+:root {
+  color-scheme: light;
+
+  --color-bg: oklch(0.97 0.018 84);
+  --color-surface: oklch(0.985 0.012 84);
+  --color-surface-raised: oklch(1 0 0);
+  --color-border: oklch(0.89 0.022 75);
+  --color-border-strong: oklch(0.78 0.045 68);
+
+  --color-ink: oklch(0.31 0.03 48);
+  --color-ink-secondary: oklch(0.45 0.028 55);
+  --color-ink-muted: oklch(0.58 0.02 60);
+  --color-ink-inverse: oklch(0.99 0.01 95);
+
+  --color-primary: oklch(0.68 0.17 60);
+  --color-primary-hover: oklch(0.73 0.17 62);
+  --color-primary-pressed: oklch(0.61 0.15 58);
+  --color-primary-subtle: oklch(0.94 0.04 70);
+
+  --color-secondary: oklch(0.65 0.12 155);
+  --color-secondary-subtle: oklch(0.94 0.03 155);
+  --color-accent: oklch(0.69 0.16 28);
+  --color-accent-subtle: oklch(0.94 0.04 28);
+  --color-warning: oklch(0.77 0.16 84);
+  --color-warning-subtle: oklch(0.96 0.04 88);
+  --color-error: oklch(0.63 0.18 25);
+  --color-error-subtle: oklch(0.95 0.04 25);
+  --color-success: oklch(0.68 0.14 150);
+  --color-success-subtle: oklch(0.95 0.04 150);
+
+  --layer-espresso: oklch(0.34 0.05 45);
+  --layer-milk: oklch(0.95 0.03 90);
+  --layer-foam: oklch(0.985 0.008 90);
+  --layer-caramel: oklch(0.73 0.16 73);
+  --layer-cocoa: oklch(0.38 0.05 53);
+  --layer-matcha: oklch(0.56 0.12 152);
+  --layer-thai-tea: oklch(0.65 0.18 61);
+  --layer-orange: oklch(0.7 0.18 49);
+  --layer-mint: oklch(0.62 0.12 175);
+  --layer-soda: oklch(0.92 0.03 238);
+  --layer-blended: oklch(0.45 0.06 55);
+
+  --font-display: 'Sora', 'IBM Plex Sans Thai', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'IBM Plex Sans Thai', 'Sora', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+
+  --shadow-sm: 0 4px 10px oklch(0.48 0.03 55 / 0.08);
+  --shadow-md: 0 14px 34px oklch(0.48 0.04 55 / 0.12);
+  --shadow-lg: 0 24px 54px oklch(0.48 0.06 55 / 0.14);
+  --shadow-xl: 0 34px 72px oklch(0.48 0.06 55 / 0.16);
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background-color: var(--color-bg);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--color-ink);
+  background:
+    radial-gradient(circle at top left, oklch(0.95 0.05 75 / 0.95), transparent 32%),
+    radial-gradient(circle at top right, oklch(0.95 0.04 155 / 0.6), transparent 26%),
+    linear-gradient(180deg, oklch(0.985 0.01 88), var(--color-bg));
+}
+
+#app {
+  min-height: 100vh;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-primary) 20%, white);
+  color: var(--color-ink);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  line-height: 1.25;
+  font-weight: 700;
+  text-wrap: balance;
+  color: var(--color-ink);
+}
+
+h1 { font-size: 1.75rem; letter-spacing: -0.03em; }
+h2 { font-size: 1.375rem; letter-spacing: -0.025em; }
+h3 { font-size: 1.125rem; }
+h4 { font-size: 1rem; }
+
+:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 80%, white);
+  outline-offset: 3px;
+  border-radius: 0.35rem;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes steam-rise {
+  0% { opacity: 0.5; transform: translateY(0) scaleX(1); }
+  50% { opacity: 0.3; transform: translateY(-12px) scaleX(1.2); }
+  100% { opacity: 0; transform: translateY(-24px) scaleX(0.8); }
+}
+
+@keyframes pour-stream {
+  0% { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}
+
+@keyframes blender-shake {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-1px, -1px) rotate(-0.5deg); }
+  20% { transform: translate(1px, -2px) rotate(0.5deg); }
+  30% { transform: translate(-2px, 0) rotate(-0.5deg); }
+  40% { transform: translate(2px, -1px) rotate(0.5deg); }
+  50% { transform: translate(-1px, 1px) rotate(-0.3deg); }
+  60% { transform: translate(1px, -1px) rotate(0.3deg); }
+  70% { transform: translate(-2px, 0) rotate(-0.5deg); }
+  80% { transform: translate(2px, -1px) rotate(0.5deg); }
+  90% { transform: translate(-1px, -2px) rotate(-0.3deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes bubble {
+  0% { opacity: 0; transform: translateY(0) scale(0.5); }
+  50% { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-20px) scale(1); }
+}
+
+.animate-fade-in {
+  animation: fade-in var(--duration-normal) var(--ease-out-quint) forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up var(--duration-slow) var(--ease-out-quint) forwards;
+}
+
+.animate-steam {
+  animation: steam-rise 2s var(--ease-out-quint) infinite;
+}
+
+.animate-pour {
+  animation: pour-stream 0.8s var(--ease-out-quint) infinite alternate;
+}
+
+.animate-blender-shake {
+  animation: blender-shake 0.12s infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s var(--ease-in-out-quint) infinite;
+}

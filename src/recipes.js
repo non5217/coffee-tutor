@@ -170,7 +170,8 @@ export const recipes = {
         ],
         steps: [
           { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
-          { name: 'เทโกโก้ผสมและนมผสมลงแก้วน้ำแข็ง', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'เทโกโก้ผสมลงแก้วน้ำแข็ง', duration: 4, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'เติมนมผสมให้เกิดชั้นกลาง', duration: 3, phase: 'mix', target: 'main', layerIndex: 1 },
           { name: 'ราดช็อตเอสเพรสโซ่ท็อปด้านบน', duration: 5, phase: 'mix', target: 'main', layerIndex: 2 }
         ]
       },
@@ -199,8 +200,10 @@ export const recipes = {
         ],
         steps: [
           { name: 'สกัดเอสเพรสโซ่ 2 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
-          { name: 'เทไซรัปคาราเมลและนมสดลงแก้ว', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
-          { name: 'ราดช็อตเอสเพรสโซ่และฟองนมท็อปด้านบน', duration: 5, phase: 'garnish', target: 'main', layerIndex: 2 }
+          { name: 'เทไซรัปคาราเมลลงก้นแก้ว', duration: 3, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'เติมนมสดและน้ำแข็งให้ได้ชั้นกลาง', duration: 5, phase: 'mix', target: 'main', layerIndex: 1 },
+          { name: 'ราดช็อตเอสเพรสโซ่ท็อปด้านบน', duration: 4, phase: 'mix', target: 'main', layerIndex: 2 },
+          { name: 'ปิดท้ายด้วยฟองนมและซอสคาราเมล', duration: 3, phase: 'garnish', target: 'main', layerIndex: 3 }
         ]
       }
     }
@@ -257,7 +260,8 @@ export const recipes = {
         ],
         steps: [
           { name: 'สกัดเอสเพรสโซ่ 1 ช็อต', duration: 25, phase: 'extraction', target: 'shot_cup' },
-          { name: 'ผสมไซรัป มิ้นต์ โซดาลงในแก้ว', duration: 7, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'ผสมไซรัปมิ้นต์ มะนาว และน้ำเชื่อมลงก้นแก้ว', duration: 4, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'เติมโซดาซ่าให้ได้ชั้นกลางใส', duration: 4, phase: 'mix', target: 'main', layerIndex: 1 },
           { name: 'เทช็อตกาแฟลงแก้วและตกแต่งใบมิ้นต์', duration: 5, phase: 'garnish', target: 'main', layerIndex: 2 }
         ]
       }
@@ -370,7 +374,8 @@ export const recipes = {
         ],
         steps: [
           { name: 'ละลายผงโกโก้ในน้ำร้อนและนมผสม', duration: 15, phase: 'prep', target: 'shot_cup' },
-          { name: 'เทไซรัปมิ้นต์ลงแก้ว เติมน้ำแข็งและนม', duration: 5, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'เทไซรัปมิ้นต์ลงแก้วน้ำแข็ง', duration: 3, phase: 'mix', target: 'main', layerIndex: 0 },
+          { name: 'เติมนมสดผสมนมผสมให้เกิดชั้นกลาง', duration: 4, phase: 'mix', target: 'main', layerIndex: 1 },
           { name: 'เทโกโก้แยกชั้นสวยงามท็อปหน้า', duration: 5, phase: 'mix', target: 'main', layerIndex: 2 }
         ]
       }

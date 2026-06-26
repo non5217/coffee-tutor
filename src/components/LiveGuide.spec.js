@@ -9,6 +9,6 @@ describe('LiveGuide', () => {
     setServingType('cold')
     const wrapper = mount(LiveGuide)
     expect(wrapper.text()).toContain('00:00')
-    expect(wrapper.text()).toContain('Ready to start brewing')
+    expect(wrapper.text()).toContain('พร้อมเริ่มชง')
   })
 })
