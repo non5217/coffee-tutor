@@ -1,11 +1,15 @@
 import { reactive } from 'vue'
 
 export const state = reactive({
-  temp: 'hot',
-  shots: 2,
-  currentStep: 'selection'
+  currentStep: 'selection',
+  category: 'coffee',
+  drinkId: 'espresso',
+  servingType: 'cold',
+  sweetness: 'normal'
 })
 
-export function setTemp(temp) { state.temp = temp }
-export function setShots(shots) { state.shots = shots }
+export function setCategory(category) { state.category = category }
+export function setDrinkId(drinkId) { state.drinkId = drinkId }
+export function setServingType(type) { state.servingType = type }
+export function setSweetness(sweetness) { state.sweetness = sweetness }
 export function setStep(step) { state.currentStep = step }
