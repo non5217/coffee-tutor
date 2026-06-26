@@ -4,11 +4,11 @@ import LiveGuide from './LiveGuide.vue'
 import { state, setDrinkId, setServingType } from '../store.js'
 
 describe('LiveGuide', () => {
-  it('renders timer and brewing stages', () => {
+  it('renders timer and ready to brew status', () => {
     setDrinkId('espresso')
     setServingType('cold')
     const wrapper = mount(LiveGuide)
     expect(wrapper.text()).toContain('00:00')
-    expect(wrapper.text()).toContain('Ready')
+    expect(wrapper.text()).toContain('Ready to start brewing')
   })
 })

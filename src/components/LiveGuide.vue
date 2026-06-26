@@ -73,6 +73,45 @@ const currentStepName = computed(() => {
   return step ? step.name : ''
 })
 
+const activeStep = computed(() => {
+  if (seconds.value === 0) return null
+  if (seconds.value >= totalDuration.value) return { name: 'done', phase: 'done' }
+  return stepsTimeline.value[currentStepIndex.value]
+})
+
+const activeSource = computed(() => {
+  if (!activeStep.value || !isRunning.value) return 'none'
+  const phase = activeStep.value.phase
+  const name = activeStep.value.name.toLowerCase()
+
+  if (phase === 'extraction') {
+    return 'portafilter'
+  }
+  if (phase === 'blend') {
+    return 'blender'
+  }
+  if (phase === 'mix' || phase === 'garnish' || phase === 'prep') {
+    if (name.includes('กาแฟ') || name.includes('เอสเพรสโซ่') || name.includes('ช็อต') || name.includes('ราด') || name.includes('ชา')) {
+      return 'shot_cup'
+    }
+    return 'pitcher'
+  }
+  return 'none'
+})
+
+const streamColor = computed(() => {
+  if (!activeStep.value) return 'transparent'
+  const name = activeStep.value.name.toLowerCase()
+  if (name.includes('นม')) return '#fffdf5'
+  if (name.includes('ชาไทย') || name.includes('ชาสีส้ม')) return '#ea580c'
+  if (name.includes('มัทฉะ') || name.includes('ชาเขียว') || name.includes('มิ้นท์')) return '#15803d'
+  if (name.includes('ส้ม')) return '#f97316'
+  if (name.includes('โกโก้') || name.includes('ช็อคโกแลต') || name.includes('มอคค่า')) return '#3b2314'
+  if (name.includes('ไซรัป') || name.includes('คาราเมล') || name.includes('น้ำเชื่อม')) return '#f59e0b'
+  if (name.includes('โซดา') || name.includes('น้ำเปล่า') || name.includes('น้ำร้อน')) return '#e0f2fe'
+  return '#451a03' // Coffee brown
+})
+
 const fillPercentages = computed(() => {
   if (!currentSpec.value) return []
   const layers = currentSpec.value.layers
@@ -86,7 +125,6 @@ const fillPercentages = computed(() => {
 
   // Calculate scaling coefficient based on time
   const currentRatio = seconds.value / totalDuration.value
-  // Fill layers bottom-up sequentially based on extraction phase ratio
   let remainingFill = currentRatio * 100
   return layers.map(layer => {
     const fill = Math.min(layer.height, remainingFill)
@@ -132,7 +170,7 @@ const fillPercentages = computed(() => {
               <span v-if="idx < currentStepIndex || seconds >= totalDuration">✓</span>
               <span v-else>{{ idx + 1 }}</span>
             </div>
-            <div class="flex flex-col">
+            <div class="flex flex-col text-left">
               <span class="font-bold text-sm leading-snug">{{ step.name }}</span>
               <span class="text-[10px] uppercase font-bold text-slate-500">{{ step.end - step.start }} seconds</span>
             </div>
@@ -174,40 +212,96 @@ const fillPercentages = computed(() => {
       </div>
     </div>
     
-    <!-- Right Panel: Live Cup filling Animation -->
-    <div class="flex-1 flex flex-col justify-center items-center bg-slate-950/40 rounded-2xl border border-slate-800 p-8 min-h-[300px] relative overflow-hidden">
-      <!-- Steam for Hot -->
-      <div v-if="state.servingType === 'hot' && seconds > 0 && seconds < totalDuration" class="absolute top-12 flex gap-1 z-10">
+    <!-- Right Panel: Live Cup/Blender filling Animation -->
+    <div class="flex-1 flex flex-col justify-center items-center bg-slate-950/40 rounded-2xl border border-slate-800 p-8 min-h-[450px] relative overflow-hidden">
+      <!-- Steam for Hot finished -->
+      <div v-if="state.servingType === 'hot' && seconds >= totalDuration" class="absolute top-20 flex gap-1 z-10">
         <span class="w-1.5 h-10 bg-slate-400/20 rounded-full animate-bounce duration-1000"></span>
         <span class="w-1.5 h-12 bg-slate-400/10 rounded-full animate-bounce duration-700"></span>
         <span class="w-1.5 h-10 bg-slate-400/20 rounded-full animate-bounce duration-900"></span>
       </div>
 
       <!-- Current Step Caption -->
-      <div class="text-sm font-bold text-center mb-10 text-slate-300 border-b border-slate-800/60 pb-3 w-full max-w-xs capitalize tracking-wide">
+      <div class="text-sm font-bold text-center mb-6 text-slate-300 border-b border-slate-800/60 pb-3 w-full max-w-xs capitalize tracking-wide">
         {{ currentStepName }}
       </div>
 
-      <!-- Brewing Cup Container -->
-      <div class="flex flex-col items-center">
-        <!-- Portafilter / Brewer nozzle -->
-        <div class="w-24 h-8 bg-slate-800 rounded-b-xl relative z-20 shadow-md">
-          <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-700 rounded-b-md"></div>
+      <!-- Animation Area -->
+      <div class="relative w-full h-80 flex flex-col items-center justify-end">
+        
+        <!-- ==================== ANIMATED POURING SOURCES ==================== -->
+
+        <!-- 1. Centered Portafilter -->
+        <transition name="fade">
+          <div v-if="activeSource === 'portafilter'" class="absolute top-2 flex flex-col items-center z-20">
+            <div class="w-24 h-6 bg-slate-700 rounded-b-xl shadow-md border-b-2 border-slate-600"></div>
+            <div class="w-3 h-2 bg-slate-600 rounded-b-sm"></div>
+          </div>
+        </transition>
+
+        <!-- 2. Pouring Pitcher (Spout + Body + Handle) -->
+        <transition name="slide-in-pitcher">
+          <div v-if="activeSource === 'pitcher'" class="absolute top-0 right-12 flex flex-col items-end z-20 origin-bottom-left rotate-[-35deg] transition-all duration-500">
+            <div class="relative w-16 h-18 bg-slate-300 rounded-b-xl border-l border-white shadow-lg flex items-center justify-center">
+              <!-- Pitcher handle -->
+              <div class="absolute -left-3 top-4 w-4 h-10 border-4 border-slate-300 rounded-l-full"></div>
+              <!-- Pitcher spout -->
+              <div class="absolute -right-2 top-0 w-3 h-3 bg-slate-300 transform rotate-45 border-t border-r border-slate-100"></div>
+              <span class="text-[8px] text-slate-700 font-extrabold uppercase scale-90">Milk/Mix</span>
+            </div>
+          </div>
+        </transition>
+
+        <!-- 3. Pouring Shot Cup -->
+        <transition name="slide-in-shot">
+          <div v-if="activeSource === 'shot_cup'" class="absolute top-2 right-16 flex flex-col items-end z-20 origin-bottom-left rotate-[-35deg] transition-all duration-500">
+            <div class="relative w-12 h-12 bg-sky-200/40 border border-sky-100/50 rounded-b-md shadow-md flex items-center justify-center">
+              <!-- Espresso inside shot cup -->
+              <div class="absolute bottom-0 w-full h-2/3 bg-amber-900/80 rounded-b-sm"></div>
+              <!-- Pour lip -->
+              <div class="absolute -right-1 top-0 w-2 h-2 bg-sky-200/40 transform rotate-45 border-t border-r border-sky-100/50"></div>
+              <span class="text-[7px] text-white font-extrabold z-10">Espresso</span>
+            </div>
+          </div>
+        </transition>
+
+        <!-- ==================== FLOWING LIQUID STREAMS ==================== -->
+
+        <!-- Vertical Stream (Portafilter) -->
+        <div 
+          v-if="activeSource === 'portafilter'" 
+          class="absolute top-10 left-1/2 -translate-x-1/2 w-1.5 h-36 z-10 pointer-events-none transition-all duration-300"
+          :style="{ backgroundColor: streamColor }"
+        ></div>
+
+        <!-- Angled Stream (Pitcher or Shot Cup pouring from top-right) -->
+        <div 
+          v-if="activeSource === 'pitcher' || activeSource === 'shot_cup'" 
+          class="absolute top-14 right-20 w-1.5 h-32 z-10 pointer-events-none origin-top-right rotate-[-32deg] transition-all duration-300"
+          :style="{ backgroundColor: streamColor }"
+        ></div>
+
+        <!-- ==================== THE RECIPIENT CONTAINER ==================== -->
+
+        <!-- Blender Jar (if phase is blend) -->
+        <div 
+          v-if="state.servingType === 'blended' && activeStep?.phase === 'blend'"
+          :class="{ 'animate-shake': isRunning }"
+          class="w-36 h-48 border-4 border-slate-400 bg-slate-900/20 rounded-b-lg relative overflow-hidden flex flex-col justify-end shadow-lg transition-transform duration-100"
+        >
+          <!-- Lid -->
+          <div class="absolute top-0 w-full h-4 bg-slate-800"></div>
+          <!-- Blending mixture -->
+          <div class="w-full bg-amber-700/80 transition-all duration-1000 flex items-center justify-center animate-pulse" :style="{ height: (seconds / totalDuration) * 100 + '%' }">
+            <span class="text-[9px] font-black text-white/40 tracking-widest">BLENDING...</span>
+          </div>
         </div>
 
-        <!-- Flowing liquid stream (only shown during active phases) -->
-        <div class="relative w-full flex justify-center h-28 z-10 pointer-events-none">
-          <div 
-            v-if="isRunning && seconds > 0 && seconds < totalDuration"
-            class="w-1.5 h-full bg-amber-900/80 animate-pulse transition-all duration-300"
-            :style="{ 
-              backgroundColor: currentSpec?.layers[currentSpec.layers.length - 1 - Math.max(0, currentStepIndex)]?.color || '#451a03' 
-            }"
-          ></div>
-        </div>
-
-        <!-- Glass Cup -->
-        <div class="w-36 h-44 border-4 border-slate-500 rounded-b-2xl relative overflow-hidden bg-slate-950/80 shadow-2xl z-0 flex flex-col justify-end">
+        <!-- Main Glass Cup (for normal hot/cold brewing) -->
+        <div 
+          v-else
+          class="w-36 h-44 border-4 border-slate-500 rounded-b-2xl relative overflow-hidden bg-slate-950/80 shadow-2xl z-0 flex flex-col justify-end"
+        >
           <!-- Multi-ingredients filling -->
           <div 
             v-for="(layer, idx) in currentSpec?.layers.slice().reverse() || []" 
@@ -233,7 +327,51 @@ const fillPercentages = computed(() => {
             <div class="w-6 h-6 bg-sky-200 rounded shadow -rotate-12 animate-pulse"></div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+.slide-in-pitcher-enter-active, .slide-in-pitcher-leave-active {
+  transition: all 0.5s ease-out;
+}
+.slide-in-pitcher-enter-from, .slide-in-pitcher-leave-to {
+  transform: translateX(50px) translateY(-50px) rotate(0deg);
+  opacity: 0;
+}
+
+.slide-in-shot-enter-active, .slide-in-shot-leave-active {
+  transition: all 0.5s ease-out;
+}
+.slide-in-shot-enter-from, .slide-in-shot-leave-to {
+  transform: translateX(50px) translateY(-50px) rotate(0deg);
+  opacity: 0;
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(0px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(2px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(2px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+.animate-shake {
+  animation: shake 0.15s infinite;
+}
+</style>
