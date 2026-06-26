@@ -1,14 +1,14 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import PrepChecklist from './PrepChecklist.vue'
-import { state, setShots } from '../store.js'
+import { state, setDrinkId, setServingType } from '../store.js'
 
 describe('PrepChecklist', () => {
-  beforeEach(() => { setShots(2) })
-
-  it('renders checklist for 2 shots', () => {
+  it('renders recipe ratio visualizer and dynamic ingredients list', () => {
+    setDrinkId('espresso')
+    setServingType('cold')
     const wrapper = mount(PrepChecklist)
-    expect(wrapper.text()).toContain('14-20g')
-    expect(wrapper.text()).toContain('60ml yield')
+    expect(wrapper.text()).toContain('เอสเพรสโซ่')
+    expect(wrapper.text()).toContain('นมผสม')
   })
 })
