@@ -1,11 +1,12 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
 import RecipeSelector from './RecipeSelector.vue'
-import { state } from '../store.js'
 
 describe('RecipeSelector', () => {
-  it('renders correctly', () => {
+  it('renders categories and recipes', () => {
     const wrapper = mount(RecipeSelector)
-    expect(wrapper.text()).toContain('Select Your Recipe')
+    expect(wrapper.text()).toContain('coffee')
+    expect(wrapper.text()).toContain('tea')
+    expect(wrapper.text()).toContain('non coffee')
   })
 })
