@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { state, setStep } from '../store.js'
+import { state } from '../store.js'
 import { recipes } from '../recipes.js'
 
 const activeRecipe = computed(() => recipes[state.drinkId])
@@ -82,6 +82,7 @@ const layerColors = {
   '#b45309': 'var(--layer-blended)',
 }
 const resolveColor = (hex) => layerColors[hex] || hex
+
 </script>
 
 <template>
@@ -183,22 +184,5 @@ const resolveColor = (hex) => layerColors[hex] || hex
       </section>
     </div>
 
-    <div class="mt-5 flex flex-col gap-3 sm:flex-row">
-      <button
-        type="button"
-        @click="setStep('selection')"
-        class="flex-1 rounded-[1.25rem] border border-border bg-white px-4 py-3.5 font-semibold text-ink-secondary transition-all duration-fast hover:border-border-strong hover:text-ink"
-      >
-        ← กลับ
-      </button>
-      <button
-        type="button"
-        @click="setStep('live')"
-        class="flex-[1.4] flex items-center justify-center gap-2 rounded-[1.25rem] bg-primary px-4 py-3.5 font-bold text-ink-inverse shadow-[0_18px_40px_oklch(0.62_0.14_64_/_0.22)] transition-all duration-fast hover:-translate-y-0.5 hover:bg-primary-hover active:bg-primary-pressed"
-      >
-        เริ่มสอนแบบสด
-        <span class="text-lg leading-none">→</span>
-      </button>
-    </div>
   </div>
 </template>

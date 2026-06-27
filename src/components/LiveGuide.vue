@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { state, setStep } from '../store.js'
+import { state } from '../store.js'
 import { recipes } from '../recipes.js'
 
 const activeRecipe = computed(() => recipes[state.drinkId])
@@ -290,21 +290,14 @@ const coachNote = computed(() => {
         </transition>
       </div>
 
-      <!-- Bottom nav -->
-      <div class="mt-5 flex gap-3">
+      <div class="mt-5 flex justify-center">
         <button
-          type="button"
-          @click="setStep('prep')"
-          class="flex-1 rounded-[1.25rem] border border-border bg-white px-4 py-3.5 font-semibold text-ink-secondary transition-all duration-fast hover:border-border-strong hover:text-ink"
-        >
-          ← กลับ
-        </button>
-        <button
+          v-if="completed.some(Boolean) && !allDone"
           type="button"
           @click="resetAll"
-          class="flex-1 rounded-[1.25rem] border border-border bg-white px-4 py-3.5 font-semibold text-ink-secondary transition-all duration-fast hover:border-border-strong hover:text-ink"
+          class="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-ink-secondary transition-all duration-fast hover:border-border-strong hover:text-ink"
         >
-          ล้างทั้งหมด
+          ล้างทั้งหมด เริ่มใหม่
         </button>
       </div>
     </section>

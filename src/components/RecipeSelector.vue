@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue'
-import { state, setCategory, setDrinkId, setServingType, setSweetness, setStep } from '../store.js'
+import { computed, nextTick, ref } from 'vue'
+import { state, setCategory, setDrinkId, setServingType, setSweetness } from '../store.js'
 import { recipes } from '../recipes.js'
 
 const filteredRecipes = computed(() => {
@@ -11,6 +11,8 @@ const filteredRecipes = computed(() => {
 
 const activeRecipe = computed(() => recipes[state.drinkId])
 const activeSpec = computed(() => activeRecipe.value?.specs[state.servingType] || null)
+const selectionTopRef = ref(null)
+const activeRecipeRef = ref(null)
 
 const categoryIcons = {
   coffee: '☕',
@@ -24,20 +26,39 @@ const categoryLabels = {
   'non-coffee': 'เครื่องดื่มอื่นๆ',
 }
 
-const selectCategory = (cat) => {
+const isCompactLayout = () => {
+  if (typeof window === 'undefined') return false
+  return window.matchMedia('(max-width: 1279px)').matches
+}
+
+const scrollToRef = async (targetRef, block = 'start') => {
+  if (!isCompactLayout()) return
+  await nextTick()
+  targetRef.value?.scrollIntoView({
+    behavior: 'smooth',
+    block,
+  })
+}
+
+const selectCategory = async (cat) => {
   setCategory(cat)
   const firstOfCat = Object.keys(recipes).find(key => recipes[key].category === cat)
   if (firstOfCat) {
-    selectDrink(firstOfCat)
+    await selectDrink(firstOfCat)
   }
 }
 
-const selectDrink = (id) => {
+const selectDrink = async (id) => {
   setDrinkId(id)
   const drink = recipes[id]
   if (!drink.allowedTypes.includes(state.servingType)) {
     setServingType(drink.allowedTypes[0])
   }
+  await scrollToRef(activeRecipeRef, 'start')
+}
+
+const scrollToRecipeList = async () => {
+  await scrollToRef(selectionTopRef, 'start')
 }
 
 const currentLayers = computed(() => {
@@ -117,7 +138,10 @@ const resolveColor = (hex) => layerColors[hex] || hex
 
 <template>
   <div class="flex min-h-[620px] flex-col xl:flex-row">
-    <div class="flex flex-1 flex-col border-b border-border/70 p-5 sm:p-6 xl:border-b-0 xl:border-r">
+    <div
+      ref="selectionTopRef"
+      class="flex flex-1 flex-col border-b border-border/70 p-5 sm:p-6 xl:border-b-0 xl:border-r"
+    >
       <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div class="max-w-xl">
           <span class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary-subtle px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
@@ -133,6 +157,12 @@ const resolveColor = (hex) => layerColors[hex] || hex
           <div class="mt-1 text-2xl font-black text-ink">{{ filteredRecipes.length }}</div>
           <div class="text-xs text-ink-secondary">สูตรในหมวดนี้</div>
         </div>
+      </div>
+
+      <div class="mb-4 rounded-[1.4rem] border border-primary/15 bg-primary-subtle/60 px-4 py-3 text-sm text-ink-secondary xl:hidden">
+        เลือกเมนูแล้วหน้าจอจะเลื่อนไปส่วน
+        <span class="font-bold text-ink"> Active Recipe </span>
+        ให้อัตโนมัติ เพื่อปรับสูตรต่อได้ง่ายบนมือถือ
       </div>
 
       <div class="grid gap-2 rounded-[1.5rem] bg-white/80 p-2 shadow-sm sm:grid-cols-3">
@@ -197,7 +227,10 @@ const resolveColor = (hex) => layerColors[hex] || hex
       </div>
     </div>
 
-    <div class="flex flex-1 flex-col bg-[linear-gradient(180deg,rgba(255,251,246,0.92),rgba(247,240,231,0.94))] p-6 sm:p-8">
+    <div
+      ref="activeRecipeRef"
+      class="flex flex-1 flex-col bg-[linear-gradient(180deg,rgba(255,251,246,0.92),rgba(247,240,231,0.94))] p-6 sm:p-8"
+    >
       <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div class="max-w-xl">
           <span class="inline-flex items-center gap-2 rounded-full border border-secondary/25 bg-secondary-subtle px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
@@ -207,6 +240,13 @@ const resolveColor = (hex) => layerColors[hex] || hex
           <p class="mt-2 text-sm leading-7 text-ink-secondary">
             เลือกสไตล์การเสิร์ฟ แล้วสังเกตโครงสร้างเครื่องดื่มจากภาพ preview เพื่อจำลำดับการเทให้แม่นยำ
           </p>
+          <button
+            type="button"
+            @click="scrollToRecipeList"
+            class="mt-4 inline-flex items-center gap-2 rounded-full border border-border bg-white/90 px-4 py-2 text-sm font-semibold text-ink-secondary transition-all duration-fast hover:border-border-strong hover:text-ink xl:hidden"
+          >
+            ↑ กลับไปเลือกรายการเมนู
+          </button>
         </div>
 
         <div class="rounded-[1.5rem] border border-white/70 bg-white/88 p-4 shadow-sm lg:max-w-xs">
@@ -338,14 +378,6 @@ const resolveColor = (hex) => layerColors[hex] || hex
         </section>
       </div>
 
-      <button
-        type="button"
-        @click="setStep('prep')"
-        class="mt-6 flex items-center justify-center gap-2 rounded-[1.35rem] bg-primary px-5 py-4 text-base font-bold text-ink-inverse shadow-[0_18px_40px_oklch(0.62_0.14_64_/_0.24)] transition-all duration-fast hover:-translate-y-0.5 hover:bg-primary-hover active:bg-primary-pressed"
-      >
-        เตรียมส่วนผสม
-        <span class="text-lg leading-none">→</span>
-      </button>
     </div>
   </div>
 </template>

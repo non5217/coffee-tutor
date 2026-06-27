@@ -1,10 +1,11 @@
 <script setup>
-import { computed } from 'vue'
-import { state } from './store.js'
+import { computed, ref, watch, nextTick } from 'vue'
+import { state, setStep } from './store.js'
 import { recipes } from './recipes.js'
 import RecipeSelector from './components/RecipeSelector.vue'
 import PrepChecklist from './components/PrepChecklist.vue'
 import LiveGuide from './components/LiveGuide.vue'
+import BottomNav from './components/BottomNav.vue'
 
 const totalRecipes = Object.keys(recipes).length
 const categoryCount = new Set(Object.values(recipes).map((recipe) => recipe.category)).size
@@ -12,13 +13,36 @@ const categoryCount = new Set(Object.values(recipes).map((recipe) => recipe.cate
 const stepItems = [
   { id: 'selection', label: 'เลือกเมนู', accent: 'จากสูตรยอดนิยม' },
   { id: 'prep', label: 'เตรียมส่วนผสม', accent: 'พร้อมก่อนเริ่ม' },
-  { id: 'live', label: 'สอนแบบสด', accent: 'จับเวลาและเทตามจังหวะ' },
+  { id: 'live', label: 'ทำตามขั้นตอน', accent: 'ซ้อมแบบ checklist' },
 ]
 
 const currentStepIndex = computed(() => {
   const index = stepItems.findIndex((item) => item.id === state.currentStep)
   return index === -1 ? 0 : index
 })
+
+const contentRef = ref(null)
+
+// Scroll to content area when step changes
+watch(
+  () => state.currentStep,
+  async () => {
+    await nextTick()
+    if (contentRef.value) {
+      contentRef.value.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+)
+
+const jumpToStep = (stepId) => {
+  setStep(stepId)
+}
+
+const updateSweetnessFromStep = (step) => {
+  if (step === 'live') {
+    // Optionally sync sweetness; nothing needed here yet
+  }
+}
 </script>
 
 <template>
@@ -29,7 +53,7 @@ const currentStepIndex = computed(() => {
       <div class="absolute bottom-[-5rem] left-1/3 h-72 w-72 rounded-full bg-accent/12 blur-3xl"></div>
     </div>
 
-    <main class="relative mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+    <main class="relative mx-auto max-w-6xl px-4 pt-5 sm:px-6 sm:pt-6 lg:px-8 lg:pt-8">
       <section class="animate-fade-in overflow-hidden rounded-[2rem] border border-white/65 bg-white/72 shadow-[0_28px_90px_oklch(0.53_0.09_65_/_0.18)] backdrop-blur-xl">
         <div class="border-b border-border/75 px-5 py-6 sm:px-8 sm:py-8">
           <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
@@ -65,22 +89,26 @@ const currentStepIndex = computed(() => {
             </div>
           </div>
 
+          <!-- Clickable step pills -->
           <div class="mt-6 flex flex-wrap gap-3">
-            <div
+            <button
               v-for="(item, index) in stepItems"
               :key="item.id"
+              type="button"
+              @click="jumpToStep(item.id)"
+              :aria-pressed="state.currentStep === item.id"
               :class="[
-                'flex min-w-[180px] flex-1 items-center gap-3 rounded-2xl border px-4 py-3 transition-all duration-normal',
+                'flex min-w-[180px] flex-1 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-all duration-normal',
                 state.currentStep === item.id
-                  ? 'border-primary/25 bg-primary-subtle shadow-sm'
+                  ? 'border-primary/25 bg-primary-subtle shadow-sm cursor-default'
                   : index < currentStepIndex
-                    ? 'border-success/25 bg-success-subtle'
-                    : 'border-border/80 bg-white/75'
+                    ? 'border-success/25 bg-success-subtle hover:border-success/40 cursor-pointer'
+                    : 'border-border/80 bg-white/75 hover:border-primary/20 hover:bg-primary-subtle/50 cursor-pointer'
               ]"
             >
               <div
                 :class="[
-                  'flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-bold',
+                  'flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-bold transition-all duration-normal',
                   state.currentStep === item.id
                     ? 'bg-primary text-ink-inverse'
                     : index < currentStepIndex
@@ -88,17 +116,18 @@ const currentStepIndex = computed(() => {
                       : 'bg-surface text-ink-secondary'
                 ]"
               >
-                {{ index + 1 }}
+                <span v-if="index < currentStepIndex">✓</span>
+                <span v-else>{{ index + 1 }}</span>
               </div>
               <div class="min-w-0">
                 <div class="font-semibold text-ink">{{ item.label }}</div>
                 <div class="text-xs text-ink-muted">{{ item.accent }}</div>
               </div>
-            </div>
+            </button>
           </div>
         </div>
 
-        <div class="p-3 sm:p-4 md:p-5">
+        <div ref="contentRef" class="p-3 sm:p-4 md:p-5">
           <div class="overflow-hidden rounded-[1.75rem] border border-border/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(254,250,244,0.92))] shadow-[inset_0_1px_0_rgba(255,255,255,0.88)]">
             <RecipeSelector v-if="state.currentStep === 'selection'" />
             <PrepChecklist v-else-if="state.currentStep === 'prep'" />
@@ -106,10 +135,13 @@ const currentStepIndex = computed(() => {
           </div>
         </div>
       </section>
-
-      <footer class="px-2 pt-4 text-center text-xs text-ink-muted">
-        Coffee Tutor · ฝึกแบบเห็นภาพ พร้อมซ้อมเสิร์ฟได้จริง
-      </footer>
     </main>
+
+    <!-- Bottom Navigation Bar -->
+    <BottomNav />
+
+    <footer class="px-2 pb-24 pt-6 text-center text-xs text-ink-muted sm:pb-28">
+      Coffee Tutor · ฝึกแบบเห็นภาพ พร้อมซ้อมเสิร์ฟได้จริง
+    </footer>
   </div>
 </template>
